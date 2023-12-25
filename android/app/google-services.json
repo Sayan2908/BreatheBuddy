@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "148934821829",
+    "project_id": "copdbuddy",
+    "storage_bucket": "copdbuddy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148934821829:android:2017cf9ab00e5aea18adac",
+        "android_client_info": {
+          "package_name": "com.example.copdbuddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUx4RXS6qlzxQeLzA6TM54LKS0Vih3-k0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
