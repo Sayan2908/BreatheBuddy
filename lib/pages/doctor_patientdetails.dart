@@ -52,7 +52,7 @@ class PatientDetailsPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PatientGraphPage(userId: patient.id)),
+                    MaterialPageRoute(builder: (context) => PatientGraphPage(userId: patient.id, name: patient.name)),
                   ) ,
                   child: Text('Get More Details'),
                 ),
@@ -81,7 +81,7 @@ class PatientDetailsPage extends StatelessWidget {
           _buildDetailRow('spO2 Level: ', '${copdData['spO2Level']}'),
           _buildDetailRow('mMRC Grade: ', '${copdData['mMRCGrade']}'),
           _buildDetailRow('Heart Rate: ', '${copdData['heartRate']}'),
-          _buildDetailRow('PEFR Value: ', '${copdData['pefrValue']}'),
+          _buildDetailRow('PEFR Value: ', '${copdData['PEFRValue']}'),
           _buildDetailRow('Inhaler Taken: ', '${copdData['inhalerTaken']}'),
           _buildDetailRow('Breathing Exercises Done: ', '${copdData['breathingExercisesDone']}'),
           _buildDetailRow('Timestamp: ', copdData['timestamp'] is Timestamp ? DateFormat('yyyy-MM-dd HH:mm:ss').format(copdData['timestamp'].toDate()) : '${copdData['timestamp']}'),

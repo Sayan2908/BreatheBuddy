@@ -12,7 +12,7 @@ class NotificationServices {
   }
 
   void sendNotification ( String title, String body) async {
-    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails('medicine', 'Take medication', importance: Importance.max, priority: Priority.high);
+    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails('medicine', 'Take medication', 'Take your Medicines' , importance: Importance.max, priority: Priority.high);
     print(androidNotificationDetails);
     NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
@@ -23,7 +23,7 @@ class NotificationServices {
   }
 
   void scheduleNotification ( String title , String body ) async {
-    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails('medicine', 'Take medication', importance: Importance.max, priority: Priority.high);
+    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails('medicine', 'Take medication', 'Take your Medicines' , importance: Importance.max, priority: Priority.high);
 
     NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,

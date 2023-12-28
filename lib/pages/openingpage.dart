@@ -15,7 +15,7 @@ class Welcome extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Copd Buddy',
+                'Breathe Buddy',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 32,

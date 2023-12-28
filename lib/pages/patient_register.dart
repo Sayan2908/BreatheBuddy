@@ -104,7 +104,7 @@ class _PatientRegisterState extends State<PatientRegister> {
 
                 // welcome back, you've been missed!
                 const Text(
-                  'Welcome to CopdBuddy',
+                  'Welcome to Breathe Buddy',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 30,

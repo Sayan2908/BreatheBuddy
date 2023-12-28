@@ -21,7 +21,7 @@ class _DoctorLoginState extends State<DoctorLogin> {
 
   void signUserIn() async {
     try {
-      if (usernameController.text == 'testdoctor@gmail.com') {
+      if (usernameController.text == 'testdoctor@gmail.com' || usernameController.text == 'nandanigulati@gmail.com') {
         firebase_auth.UserCredential userCredential =
             await firebaseAuth.signInWithEmailAndPassword(
                 email: usernameController.text,
@@ -126,29 +126,29 @@ class _DoctorLoginState extends State<DoctorLogin> {
                   height: 50,
                 ),
 
-                InkWell(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DoctorRegister()),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Not a member?',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
-                        'Register now',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // InkWell(
+                //   onTap: () => Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => DoctorRegister()),
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Text(
+                //         'Not a member?',
+                //         style: TextStyle(color: Colors.grey[700]),
+                //       ),
+                //       const SizedBox(width: 4),
+                //       const Text(
+                //         'Register now',
+                //         style: TextStyle(
+                //           color: Colors.blue,
+                //           fontWeight: FontWeight.bold,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
                 const SizedBox(
                   height: 25,

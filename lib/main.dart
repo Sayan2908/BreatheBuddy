@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
           // You can add more text styles as needed
         ),
       ),
-      home: DoctorHomePage(),
+      home: Welcome(),
     );
   }
 }

@@ -8,8 +8,9 @@ import 'package:path/path.dart';
 
 class PatientGraphPage extends StatefulWidget {
   final String userId;
+  final String name;
 
-  const PatientGraphPage({Key? key, required this.userId}) : super(key: key);
+  const PatientGraphPage({Key? key, required this.userId, required this.name}) : super(key: key);
 
   @override
   _PatientGraphPageState createState() => _PatientGraphPageState();
@@ -72,7 +73,7 @@ class _PatientGraphPageState extends State<PatientGraphPage> {
 
       if (downloadsDir != null) {
         // Generate the file path in the Downloads folder
-        String filePath = '${downloadsDir.path}/${widget.userId}_patient.xlsx';
+        String filePath = '${downloadsDir.path}/${widget.name}_patient.xlsx';
 
         // Get Excel file bytes
         List<int> excelBytes = excel.encode() ?? [];
@@ -80,7 +81,7 @@ class _PatientGraphPageState extends State<PatientGraphPage> {
         // Save the file
         await File(filePath).writeAsBytes(excelBytes);
 
-        // OpenFile.open(filePath);
+        OpenFile.open(filePath);
 
         // Provide feedback to the user (optional)
         print('Excel file saved at: $filePath');

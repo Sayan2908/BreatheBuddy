@@ -188,9 +188,9 @@ class _FormsScreenState extends State<FormsScreen> {
       'Is there chest tightness? (lower the better)',
       'How often do you experience breathlessness?',
       'To what extent are your activities limited at home?',
-      'How confident do you feel in leaving home? (lower the score better you are)',
-      'How soundly do you sleep? (lower means better sound sleep)',
-      'What is your energy level? (lower the better)',
+      'How low confident do you feel in leaving home? (lower the score better you are)',
+      'How less sound sleep do you have? (lower means better sound sleep)',
+      'How low energy are you feeling? (lower the score better)',
     ];
 
     for (int i = 0; i < 8; i++) {
@@ -234,19 +234,26 @@ class _FormsScreenState extends State<FormsScreen> {
           ),
         ],
       ),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Question 2 (1-4): What is your mMRC grade?'),
-          TextField(
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            onChanged: (value) {
-              setState(() {
-                _decimalAnswer2 = double.tryParse(value);
-              });
-            },
-          ),
-        ],
+      SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Question 2 (1-4): What is your mMRC grade?'),
+            Image.asset(
+              "assets/mmrc.png",
+              height: 100,
+              width: 172,
+            ),
+            TextField(
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              onChanged: (value) {
+                setState(() {
+                  _decimalAnswer2 = double.tryParse(value);
+                });
+              },
+            ),
+          ],
+        ),
       ),
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -133,6 +133,7 @@ class _AddMedicinePageState extends State<AddMedicinePage> {
     AndroidNotificationDetails(
       'medicines_channel',
       'Medicines Channel',
+      'Take your Medicines',
       importance: Importance.max,
       priority: Priority.high,
     );
