@@ -39,6 +39,18 @@
    - View assigned medication and receive reminders.
    - Read doctor-authored blogs and health tips.
    - Schedule the next appointment with the doctor.
+
+## 🔥 Firebase Integration
+
+**Breathe Buddy** leverages Firebase for secure, real-time data storage and management, ensuring a seamless experience for both doctors and patients. Key Firebase features used in the app include:
+
+- **Firestore Database:** Stores patient records, COPD form submissions, medication schedules, appointment details, and doctor-authored blog posts in a structured, scalable format.
+- **Firebase Authentication:** Manages secure, role-based logins for doctors and patients, ensuring that each user has access only to the features they need.
+- **Cloud Functions:** Automates critical tasks, such as sending notifications when a patient’s condition worsens or updating medication reminders.
+- **Push Notifications:** Keeps patients informed with daily medication reminders and alerts for any updates from the doctor.
+
+Firebase’s robust backend infrastructure allows **Breathe Buddy** to securely store and manage data, providing a reliable platform for tracking and improving patient health outcomes.
+
   
 ## 🤝 Contributing
 
