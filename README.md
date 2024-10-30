@@ -15,6 +15,9 @@
    flutter pub get
 
 3. **Run the app:**
+   ```bash
+   flutter run
+
 
 ## 📝 Features
 - Daily COPD Form: Patients fill out a daily form to track symptoms, with data compiled monthly.
