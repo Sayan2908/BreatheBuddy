@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:copdbuddy/firebase_functions.dart';
 import 'package:copdbuddy/pages/createblog.dart';
 import 'package:copdbuddy/pages/doctor_patientdetails.dart';
@@ -16,29 +17,32 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildCurrentPage(),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        currentIndex: _currentIndex,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Blog',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: _buildCurrentPage(),
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          currentIndex: _currentIndex,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard),
+              label: 'Dashboard',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.book),
+              label: 'Blog',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -81,6 +85,7 @@ class DoctorDashboardPage extends StatelessWidget {
         ),
         backgroundColor: Colors.orange,
         centerTitle: true,
+        leading: Icon(Icons.home),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -88,7 +93,7 @@ class DoctorDashboardPage extends StatelessWidget {
           future: _firebaseFunctions.getAllPatientsData(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else if (snapshot.hasData) {
@@ -182,6 +187,7 @@ class DoctorBlogPage extends StatelessWidget {
         ),
         backgroundColor: Colors.orange,
         centerTitle: true,
+        leading: Icon(Icons.document_scanner),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -226,58 +232,125 @@ class DoctorBlogPage extends StatelessWidget {
 }
 
 class BlogCard extends StatelessWidget {
+  final String id;
   final String title;
   final String content;
   final DateTime time;
 
-  BlogCard({required this.title, required this.content, required this.time});
+  BlogCard({required this.id, required this.title, required this.content, required this.time});
 
   void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(url as Uri)) {
+      await launchUrl(url as Uri);
     } else {
       throw 'Could not launch $url';
     }
   }
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
+    User? user = _auth.currentUser;
+
     return Card(
       elevation: 3,
       margin: EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: TextStyle(fontFamily: 'Poppins',fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            GestureDetector(
-              onTap: () {
-                RegExp exp = RegExp(r'https?://\S+');
-                Iterable<RegExpMatch> matches = exp.allMatches(content);
-                for (RegExpMatch match in matches) {
-                  String url = match.group(0)!;
-                  _launchURL(url);
-                }
-              },
-              child: SelectableText(
-                content,
-                style: TextStyle(fontSize: 16),
+            Container(
+              width: 300,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontFamily: 'Poppins',fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () {
+                      RegExp exp = RegExp(r'https?://\S+');
+                      Iterable<RegExpMatch> matches = exp.allMatches(content);
+                      for (RegExpMatch match in matches) {
+                        String url = match.group(0)!;
+                        _launchURL(url);
+                      }
+                    },
+                    child: SelectableText(
+                      content,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Posted on: ${time.toLocal()}',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 8),
-            Text(
-              'Posted on: ${time.toLocal()}',
-              style: TextStyle(color: Colors.grey),
-            ),
+            IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () async {
+                  bool confirmDeletion = await _showDeleteConfirmationDialog(context);
+                  if (confirmDeletion) {
+                    if (user?.email == 'nandanigulati@gmail.com' || user?.email == 'testdoctor@gmail.com'){
+                      try {
+                        // Assuming you have a reference to the Firestore collection
+                        final medicinesCollection =
+                            FirebaseFirestore.instance.collection('blogs');
+
+                        // Use the document ID from the QueryDocumentSnapshot
+                        final medicineDoc = medicinesCollection.doc(id);
+
+                        // Delete the document
+                        await medicineDoc.delete();
+                      } catch (e) {
+                        print('Error deleting medicine: $e');
+                      }
+                    }
+                    else {
+                      final snackbar = SnackBar(content: Text('This feature is only available for the doctor'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                    }
+                  }
+                }),
           ],
         ),
       ),
     );
+  }
+
+  Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text('Are you sure you want to delete this blog?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pop(false); // Dismiss dialog without deletion
+              },
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Confirm deletion
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    ) ??
+        false;
   }
 }
 
@@ -300,6 +373,7 @@ class DoctorProfilePage extends StatelessWidget {
         ),
         backgroundColor: Colors.orange,
         centerTitle: true,
+        leading: Icon(Icons.person),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

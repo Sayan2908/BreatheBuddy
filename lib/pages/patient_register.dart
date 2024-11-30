@@ -104,7 +104,7 @@ class _PatientRegisterState extends State<PatientRegister> {
 
                 // welcome back, you've been missed!
                 const Text(
-                  'Welcome to Breathe Buddy',
+                  'Welcome',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 30,
@@ -141,7 +141,7 @@ class _PatientRegisterState extends State<PatientRegister> {
 
                 MyTextField(
                   controller: docuidController ,
-                  hintText: 'Enter your doctor ID',
+                  hintText: 'Enter your height',
                   obscureText: false,
                 ),
 

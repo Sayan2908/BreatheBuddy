@@ -27,7 +27,7 @@ class _PatientLoginState extends State<PatientLogin> {
     });
     try
         {
-          firebase_auth.UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(email: usernameController.text, password: passwordController.text);
+          firebase_auth.UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(email: usernameController.text.trim(), password: passwordController.text.trim());
           print(userCredential.user?.email);
           Navigator.push(
             context,
@@ -68,7 +68,7 @@ class _PatientLoginState extends State<PatientLogin> {
           
                 // welcome back, you've been missed!
                 const Text(
-                  'Welcome Back',
+                  'Welcome',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 40,

@@ -1,11 +1,13 @@
 import 'package:copdbuddy/pages/doctor_homepage.dart';
 import 'package:copdbuddy/pages/doctor_register.dart';
 import 'package:copdbuddy/pages/openingpage.dart';
+import 'package:copdbuddy/pages/patient_asthmaform.dart';
 import 'package:copdbuddy/pages/patient_copdform.dart';
 import 'package:copdbuddy/pages/patient_mainscreen.dart';
 import 'package:copdbuddy/pages/patient_register.dart';
 import 'package:copdbuddy/pages/patientdata.dart';
 import 'package:flutter/material.dart';
+import 'Services/firebasenotif_api.dart';
 import 'pages/patient_login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -15,10 +17,11 @@ import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  tz.initializeTimeZones();
+
 
   runApp(const MyApp());
 }
@@ -33,6 +36,15 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   firebase_auth.FirebaseAuth firebaseAuth = firebase_auth.FirebaseAuth.instance;
+
+  final FirebaseNotificationApi firebaseNotificationApi =
+  FirebaseNotificationApi();
+
+  @override
+  void initState() {
+    super.initState();
+    firebaseNotificationApi.setupFirebase(); // Initialize Firebase notifications
+  }
 
   @override
   Widget build(BuildContext context) {

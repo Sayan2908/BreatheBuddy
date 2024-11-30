@@ -21,11 +21,11 @@ class _DoctorLoginState extends State<DoctorLogin> {
 
   void signUserIn() async {
     try {
-      if (usernameController.text == 'testdoctor@gmail.com' || usernameController.text == 'nandanigulati@gmail.com') {
+      if (usernameController.text.trim() == 'testdoctor@gmail.com' || usernameController.text.trim() == 'nandanigulati@gmail.com') {
         firebase_auth.UserCredential userCredential =
             await firebaseAuth.signInWithEmailAndPassword(
-                email: usernameController.text,
-                password: passwordController.text);
+                email: usernameController.text.trim(),
+                password: passwordController.text.trim());
         print(userCredential.user?.email);
         Navigator.push(
           context,
@@ -64,7 +64,7 @@ class _DoctorLoginState extends State<DoctorLogin> {
 
                 // welcome back, you've been missed!
                 const Text(
-                  'Welcome Back',
+                  'Welcome',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 40,

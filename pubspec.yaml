@@ -30,6 +30,7 @@ dependencies:
   path_provider: ^2.0.15
   open_file: ^3.0.1
   path:
+  firebase_messaging:
 
 dev_dependencies:
   flutter_test:

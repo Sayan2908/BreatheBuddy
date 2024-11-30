@@ -19,6 +19,9 @@ class PatientGraphPage extends StatefulWidget {
 class _PatientGraphPageState extends State<PatientGraphPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> _records = [];
+  List<Map<String, dynamic>> _asthmarecords = [];
+  String height = '',sex = 'human';
+  int age = 0;
 
   @override
   void initState() {
@@ -29,7 +32,7 @@ class _PatientGraphPageState extends State<PatientGraphPage> {
 
   Future<void> _fetchPatientRecords() async {
     try {
-      DateTime thirtyDaysAgo = DateTime.now().subtract(Duration(days: 30));
+      DateTime thirtyDaysAgo = DateTime.now().subtract(Duration(days: 90));
       // Fetch records for the specified patient ID
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
           .collection('patients')
@@ -39,8 +42,25 @@ class _PatientGraphPageState extends State<PatientGraphPage> {
           .orderBy('date', descending: true)
           .get();
 
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await FirebaseFirestore.instance
+          .collection('patients')
+          .doc(widget.userId)
+          .get();
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot2 = await _firestore
+          .collection('patients')
+          .doc(widget.userId)
+          .collection('asthmarecords')
+          .where('date', isGreaterThanOrEqualTo: thirtyDaysAgo)
+          .orderBy('date', descending: true)
+          .get();
+
       // Store records in the local list
       _records = querySnapshot.docs.map((doc) => doc.data()).toList();
+      _asthmarecords = querySnapshot2.docs.map((doc) => doc.data()).toList();
+      height = documentSnapshot['docid'] ?? "0";
+      age = documentSnapshot['age'] ?? 0;
+      sex = documentSnapshot['sex'] ?? "human";
 
       // Update the UI
       setState(() {});
@@ -55,13 +75,24 @@ class _PatientGraphPageState extends State<PatientGraphPage> {
     final sheet = excel['Sheet1'];
 
     // Add headers
+    sheet.appendRow(['Height: ${height}','Age : $age','Sex : $sex']);
     sheet.appendRow(['Date', 'Cough Tendency', 'Phlegm Amount', 'Chest Tightness', 'Breathlessness', 'Activity Limitation', 'Less Confidence', 'Less Sound Sleep', 'Low Energy', 'CAT Score', 'SpO2', 'PEFR Value', 'Heart Rate', 'Inhaler taken' /* Add other fields here */]);
 
     // Add data
     for (var record in _records) {
-      Timestamp timestamp = record['date'];
-      DateTime date = timestamp.toDate();
-      sheet.appendRow([date, record['coughTendency'], record['phlegmAmount'], record['chestTightness'], record['breathlessness'], record['activityLimitation'], record['confidenceLevel'], record['sleepQuality'], record['energyLevel'], record['catScore'], record['spO2Level'], record['PEFRValue'], record['heartRate'], record['inhalerTaken']/* Add other fields here */]);
+      DateTime date = (record['date'] as Timestamp).toDate();
+      sheet.appendRow([date.toString(), record['coughTendency'], record['phlegmAmount'], record['chestTightness'], record['breathlessness'], record['activityLimitation'], record['confidenceLevel'], record['sleepQuality'], record['energyLevel'], record['catScore'], record['spO2Level'], record['PEFRValue'], record['heartRate'], record['inhalerTaken']/* Add other fields here */]);
+    }
+
+    sheet.appendRow([]);
+    sheet.appendRow([]);
+    sheet.appendRow([]);
+    sheet.appendRow(['Asthma Form']);
+    sheet.appendRow(['Date','Asthma disrupting work','Breath shortness','Sleep Deprivation','Inhaler medication','Asthma Control']);
+
+    for (var record in _asthmarecords) {
+      DateTime date = (record['date'] as Timestamp).toDate();
+      sheet.appendRow([date.toString(),record['asthmawork'],record['breathshortness'],record['asthmasleep'],record['inhalerusage'],record['asthmacontrol']]);
     }
 
     // Get the local directory using path_provider

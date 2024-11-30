@@ -22,10 +22,28 @@ class _FormsScreenState extends State<FormsScreen> {
   final FirebaseFunctions _firebaseFunctions = FirebaseFunctions();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _showConsultationDialog(String message) {
-    showDialog(
+  void _showConsultationDialog(String message) async {
+    await showDialog(
       context: context,
       builder: (context) => ConsultationDialog(message: message),
+    );
+  }
+
+  void _showTestDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Success!'),
+        content: Text('Form Data Submitted you can close this page press the back button at the top of the screen'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -40,6 +58,12 @@ class _FormsScreenState extends State<FormsScreen> {
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         backgroundColor: Colors.orange,
         centerTitle: true,
@@ -102,22 +126,31 @@ class _FormsScreenState extends State<FormsScreen> {
                       await _firebaseFunctions.submitFormData(userId: user.uid, coughTendency: _scaleAnswers[0] ?? 1, phlegmAmount: _scaleAnswers[1] ?? 1, chestTightness: _scaleAnswers[2] ?? 1, breathlessness: _scaleAnswers[3] ?? 1, activityLimitation: _scaleAnswers[4] ?? 1, confidenceLevel: _scaleAnswers[5] ?? 1, sleepQuality: _scaleAnswers[6] ?? 1, energyLevel: _scaleAnswers[7] ?? 1, spO2Level: _decimalAnswer1 ?? 0, mMRCGrade: _decimalAnswer2 !=null ? _decimalAnswer2!.round() : 0,heartRate: _integerAnswer ?? 0, pefrValue: _decimalAnswer3 ?? 0, inhalerTaken: _stringAnswer1, breathingExercisesDone: _stringAnswer2);
                       await _firebaseFunctions.storeUserDate(userId: user.uid, coughTendency: _scaleAnswers[0] ?? 1, phlegmAmount: _scaleAnswers[1] ?? 1, chestTightness: _scaleAnswers[2] ?? 1, breathlessness: _scaleAnswers[3] ?? 1, activityLimitation: _scaleAnswers[4] ?? 1, confidenceLevel: _scaleAnswers[5] ?? 1, sleepQuality: _scaleAnswers[6] ?? 1, energyLevel: _scaleAnswers[7] ?? 1, spO2Level: _decimalAnswer1 ?? 0, mMRCGrade: _decimalAnswer2 !=null ? _decimalAnswer2!.round() : 0,heartRate: _integerAnswer ?? 0, pefrValue: _decimalAnswer3 ?? 0, inhalerTaken: _stringAnswer1, breathingExercisesDone: _stringAnswer2);
                       int sum = _scaleAnswers.fold(0, (acc, value) => acc + (value ?? 0));
-                      if (_integerAnswer! > 120 || _integerAnswer! < 60){
-                        print(_decimalAnswer3);
+                      if ((_integerAnswer! > 120 || _integerAnswer! < 60) && _decimalAnswer1! < 92 && sum > 35){
+                        _showConsultationDialog('Please Consult doctor your Heart Rate level is not normal and spO2 is low and CAT score concerning. '
+                            'Your data has been submitted press back button at the top of the screen');
+                      }
+                      else if ((_integerAnswer! > 120 || _integerAnswer! < 60) && _decimalAnswer1! < 92){
+                        _showConsultationDialog('Please Consult doctor your Heart Rate level is not normal and spO2 is low. '
+                            'Your data has been submitted press back button at the top of the screen');
+                      }
+                      else if (_integerAnswer! > 120 || _integerAnswer! < 60){
                         _showConsultationDialog('Please Consult doctor your Heart Rate level is not normal. '
                             'Your data has been submitted press back button at the top of the screen');
                       }
-                      if (_decimalAnswer1! < 92) {
+                      else if (_decimalAnswer1! < 92) {
                         _showConsultationDialog('Please Consult doctor your spO2 level is lower than safety level. '
                             'Your data has been submitted press back button at the top of the screen');
                       }
-                      if (sum > 30 && sum <= 35) {
+                      else if (sum > 30 && sum <= 35) {
                         _showConsultationDialog('Please Consult doctor your CAT Score is quite high. '
                             'Your data has been submitted press back button at the top of the screen');
                       } else if (sum > 35) {
                         _showConsultationDialog('Immediately Consult doctor your CAT Score is concerning. '
                             'Your data has been submitted press back button at the top of the screen');
                       }
+                      print(_integerAnswer);
+                      _showTestDialog();
                       Navigator.pop(context);
                     }
                   },
@@ -181,6 +214,7 @@ class _FormsScreenState extends State<FormsScreen> {
   }
 
   List<Widget> _buildScaleQuestions() {
+    double width = MediaQuery.of(context).size.width;
     List<Widget> questions = [];
     List<String> scaleQuestions = [
       'What is your tendency to cough? (the lower the better)',
@@ -193,12 +227,39 @@ class _FormsScreenState extends State<FormsScreen> {
       'How low energy are you feeling? (lower the score better)',
     ];
 
+    List<String> scaleLeftSuggestion = [
+      'I never cough',
+      'I have no phlegm in my chest',
+      'No chest tightness',
+      'Walking up a hill or flight no breathlessness',
+      'Not limited activities at home',
+      'Confident leaving my home',
+      'I sleep soundly',
+      'Have lots of energy',
+    ];
+
+    List<String> scaleRightSuggestion = [
+      'Cough all the time',
+      'Lot of phlegm (mucus)',
+      'Feeling of chest tightness',
+      'Hill climbing or flight causes breathlessness',
+      'Very limited activities at home',
+      'Not confident leaving my home',
+      'Cant sleep soundly',
+      'No energy at all',
+    ];
+
     for (int i = 0; i < 8; i++) {
       questions.add(
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Question ${i + 1}: ${scaleQuestions[i]}'),
+            Text(
+                '${i + 1}: ${scaleQuestions[i]}',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+            ),
+            ),
             Slider(
               value: _scaleAnswers[i]?.toDouble() ?? 1.0,
               onChanged: (value) {
@@ -211,6 +272,27 @@ class _FormsScreenState extends State<FormsScreen> {
               divisions: 4,
               label: _scaleAnswers[i]?.toString() ?? '1',
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: width * 0.3,
+                    child: Text(
+                        '${scaleLeftSuggestion[i]}',
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                    )
+                ),
+                Container(
+                  width: width*0.3,
+                    child: Text(
+                        '${scaleRightSuggestion[i]}',
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                    )
+                )
+              ],
+            ),
+            SizedBox(height: 20,)
           ],
         ),
       );
@@ -223,7 +305,10 @@ class _FormsScreenState extends State<FormsScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Question 1 (0-100): What is your spO2 level?'),
+          Text('1: What is your spO2 level?(range: 1 to 100)',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+            ),),
           TextField(
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             onChanged: (value) {
@@ -238,12 +323,15 @@ class _FormsScreenState extends State<FormsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Question 2 (1-4): What is your mMRC grade?'),
+            Text('2: What is your mMRC grade? (range: 0 to 4)',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+              ),),
+            SizedBox(height: 10,),
             Image.asset(
               "assets/mmrc.png",
-              height: 100,
-              width: 172,
             ),
+            SizedBox(height: 10,),
             TextField(
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (value) {
@@ -258,7 +346,10 @@ class _FormsScreenState extends State<FormsScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Question 3 (Integer): What is your heart rate?'),
+          Text('3: What is your heart rate?',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+            ),),
           TextField(
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             onChanged: (value) {
@@ -272,7 +363,10 @@ class _FormsScreenState extends State<FormsScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Question 4 (Percentage): What is your PEFR value? [If it is lower than 50% of your normal please consult doctor]'),
+          Text('4: What is your PEFR value? [If it is lower than 50% of your normal please consult doctor]',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+            ),),
           TextField(
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             onChanged: (value) {
@@ -291,7 +385,10 @@ class _FormsScreenState extends State<FormsScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Question 1: Did you take your inhaler?'),
+          Text('1: Did you take your inhaler?',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+            ),),
           Row(
             children: [
               Radio<bool>(
@@ -321,7 +418,10 @@ class _FormsScreenState extends State<FormsScreen> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Question 2: Did you do your breathing exercises?'),
+          Text('2: Did you do your breathing exercises?',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+            ),),
           Row(
             children: [
               Radio<bool>(

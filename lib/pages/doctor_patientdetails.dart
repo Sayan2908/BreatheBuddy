@@ -84,7 +84,16 @@ class PatientDetailsPage extends StatelessWidget {
           _buildDetailRow('PEFR Value: ', '${copdData['PEFRValue']}'),
           _buildDetailRow('Inhaler Taken: ', '${copdData['inhalerTaken']}'),
           _buildDetailRow('Breathing Exercises Done: ', '${copdData['breathingExercisesDone']}'),
-          _buildDetailRow('Timestamp: ', copdData['timestamp'] is Timestamp ? DateFormat('yyyy-MM-dd HH:mm:ss').format(copdData['timestamp'].toDate()) : '${copdData['timestamp']}'),
+          _buildDetailRow('Timestamp: ', copdData['timestamp'] is Timestamp ? DateFormat('yyyy-MM-dd HH:mm:ss').format(copdData['timestamp'].toDate()) : '${(copdData['timestamp'] as Timestamp).toDate()}'),
+          SizedBox(height: 16,),
+          _buildDetailRow('Last 4 weeks how much asthma prevented: ', '${copdData['asthmawork'] ?? 'No data for asthma'}'),
+          _buildDetailRow('Last 4 weeks shortness of breath: ', '${copdData['breathshortness'] ?? 'No data for asthma'}'),
+          _buildDetailRow('How often have your asthma symptoms woken from sleep: ', '${copdData['asthmasleep'] ?? 'No data for asthma'}'),
+          _buildDetailRow('How often have you used your rescue inhaler or nebuliser medication: ', '${copdData['inhalerusage'] ?? 'No data for asthma'}'),
+          _buildDetailRow('Asthma control: ', '${copdData['asthmacontrol'] ?? 'No data for asthma'}'),
+          _buildDetailRow('Asthma Score', '${copdData['asthmascore'] ?? 'No data for asthma'}'),
+          SizedBox(height: 16,),
+
         ],
       ),
     );
@@ -94,11 +103,16 @@ class PatientDetailsPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+
         children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          Container(
+            width: 200,
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
           ),
           Expanded(
             child: Text(
